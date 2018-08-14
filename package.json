@@ -1,0 +1,27 @@
+{
+  "name": "tera",
+  "version": "0.0.1",
+  "description": "Tera currency",
+  "main": "truffle.js",
+  "directories": {
+    "test": "mocha",
+    "remixd": "<path-to-project>/node_modules/remixd/bin/remixd -s /build/contracts/"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
+    "dotenv": "^6.0.0",
+    "ganache-cli": "^6.1.6",
+    "mocha": "^5.2.0",
+    "remixd": "0.1.8-alpha.4",
+    "truffle-hdwallet-provider": "0.0.3",
+    "web3": "^1.0.0-beta.26"
+  },
+  "devDependencies": {
+    "eslint-config-rallycoding": "^3.2.0"
+  }
+}
