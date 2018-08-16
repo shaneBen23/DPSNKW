@@ -3,7 +3,6 @@ pragma solidity ^0.4.24;
 import "./openzeppelin/lifecycle/Pausable.sol";
 import "./openzeppelin/ownership/Ownable.sol";
 
-/*import "./Wallet.sol";*/
 import "./WalletFunctions.sol";
 import "./Utils.sol";
 

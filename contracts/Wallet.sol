@@ -9,8 +9,6 @@ import "./Utils.sol";
 
 contract Wallet is Ownable, Pausable, Utils {
   mapping (string => string) private userInfo;
-  /* address of the token list contract */
-  address public tokenListaddress;
   /* List of the user's tokens */
   address[] private tokenList;
   /* List contracts that the user has */
@@ -74,8 +72,6 @@ contract Wallet is Ownable, Pausable, Utils {
 
   /*function addToken(address _tokenAddress, string _password) public onlyOwner {
     require(stringsEqual(userInfo["password"], _password));
-    ITokenList ITL = ITokenList(tokenListaddress);
-		require(ITL.isTokenPresent(_tokenAddress));
     require(findAddressIndex(tokenList, _tokenAddress) == 0);
 
     tokenList.push(_tokenAddress);
@@ -98,10 +94,6 @@ contract Wallet is Ownable, Pausable, Utils {
     return contactList;
   }*/
 
-  function setTokenListAddress(address _tokenListaddress) public onlyOwner {
-    tokenListaddress = _tokenListaddress;
-  }
-  
   /* fall back function, to receive ether */
   function() public payable { }
 }

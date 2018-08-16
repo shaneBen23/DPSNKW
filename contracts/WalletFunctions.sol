@@ -69,9 +69,4 @@ contract WalletFunctions is Ownable {
     IWallet currentWallet = IWallet(_walletAddress);
     return currentWallet.getContactList();
   } */
-
-  /* function callWalletSetTokenListAddress(address _walletAddress, address _tokenListaddress) public {
-    IWallet currentWallet = IWallet(_walletAddress);
-    currentWallet.setTokenListAddress(_tokenListaddress);
-  } */
 }
