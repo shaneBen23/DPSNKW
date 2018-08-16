@@ -14,8 +14,6 @@ contract WalletLedger is WalletFunctions, Pausable, Utils {
     address wallet;
   }
 
-  string constant tokenListAddress = "tokenListAddress";
-
   address[] private walletAddressList;
   /* Map from username to user info */
   mapping (string => User) private usernameToUserInfoMap;
@@ -26,8 +24,8 @@ contract WalletLedger is WalletFunctions, Pausable, Utils {
 
   event NewWalletCreated(string description, address walletAddress, uint64 time);
 
-  constructor(address _tokenListAddress) public {
-    updateConfig(tokenListAddress, _tokenListAddress);
+  constructor() public {
+
   }
 
   function createWallet(string _firstname, string _lastname, string _username, string _password) public {
@@ -40,10 +38,6 @@ contract WalletLedger is WalletFunctions, Pausable, Utils {
     address newWalletAddress = new Wallet(convertedUsername, convertedPassword);
 
     addWalletAddress(newWalletAddress);
-
-    Wallet newWallet = Wallet(newWalletAddress);
-
-    newWallet.setTokenListAddress(getTokenListAddress());
 
     User memory newUser = User(_firstname, _lastname, _username, newWalletAddress);
 
@@ -86,10 +80,6 @@ contract WalletLedger is WalletFunctions, Pausable, Utils {
     lastName = addressToUserInfoMap[_walletAddress].lastName;
     username = addressToUserInfoMap[_walletAddress].username;
     wallet = addressToUserInfoMap[_walletAddress].wallet;
-  }
-
-  function getTokenListAddress() public view returns (address) {
-    return configs[tokenListAddress];
   }
 
   function updateConfig(string _key, address _addr) public onlyOwner {

@@ -4,7 +4,6 @@ import "./openzeppelin/lifecycle/Pausable.sol";
 import "./openzeppelin/ownership/Ownable.sol";
 import "./openzeppelin/token/ERC20/ERC20.sol";
 
-import "./ITokenList.sol";
 import "./Utils.sol";
 
 contract Wallet is Ownable, Pausable, Utils {
