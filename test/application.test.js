@@ -26,15 +26,15 @@ beforeEach(async () => {
 
   sampleToken = await new web3.eth.Contract(compiledSampleToken.abi)
   .deploy({ data: compiledSampleToken.bytecode })
-  .send({ from: accounts[0], gas: '6000000' });
+  .send({ from: accounts[0], gas: '6500000' });
 
   walletLedger = await new web3.eth.Contract(compiledWalletLedger.abi)
   .deploy({ data: compiledWalletLedger.bytecode })
-  .send({ from: accounts[0], gas: '6000000' });
+  .send({ from: accounts[0], gas: '6500000' });
 
   await walletLedger.methods
   .createWallet(firstName, lastName, username, password)
-  .send({ from: accounts[0], gas: '1000000' });
+  .send({ from: accounts[0], gas: '6500000' });
 
   const userInfo = await walletLedger.methods.getUserInfoViaUsername(username).call();
 
@@ -69,7 +69,7 @@ describe('SmartWallet', () => {
   it('Check wallet ERC20 balance', async () => {
     await sampleToken.methods.quickIssueTokens(walletAddress).send({
       from: accounts[0],
-      gas: '1000000'
+      gas: '6500000'
     });
 
     const walletBalance = await walletLedger.methods
@@ -89,7 +89,7 @@ describe('SmartWallet', () => {
 
     await walletLedger.methods
     .createWallet(internalFirstName, internalLastName, internalUsername, internalPassword)
-    .send({ from: accounts[0], gas: '1000000' });
+    .send({ from: accounts[0], gas: '6500000' });
 
     const internalWallet = await walletLedger.methods
     .getUserInfoViaUsername(internalUsername).call();
@@ -100,9 +100,9 @@ describe('SmartWallet', () => {
     });
 
     await walletLedger.methods
-    .callTransferEth(walletAddress, amountToSend, internalWallet.wallet, password).send({
+    .callWalletTransferEth(walletAddress, amountToSend, internalWallet.wallet, password).send({
       from: accounts[0],
-      gas: '1000000'
+      gas: '6500000'
     });
 
     const walletBalance = await walletLedger.methods
@@ -131,12 +131,12 @@ describe('SmartWallet', () => {
 
     await sampleToken.methods.quickIssueTokens(walletAddress).send({
       from: accounts[0],
-      gas: '1000000'
+      gas: '6500000'
     });
 
     await walletLedger.methods
     .createWallet(internalFirstName, internalLastName, internalUsername, internalPassword)
-    .send({ from: accounts[0], gas: '1000000' });
+    .send({ from: accounts[0], gas: '6500000' });
 
     const internalWallet = await walletLedger.methods
     .getUserInfoViaUsername(internalUsername).call();
@@ -149,7 +149,7 @@ describe('SmartWallet', () => {
       sampleTokenAddress,
       password).send({
       from: accounts[0],
-      gas: '1000000'
+      gas: '6500000'
     });
 
     const walletBalance = await walletLedger.methods
@@ -160,5 +160,29 @@ describe('SmartWallet', () => {
 
     assert.equal(walletBalance, amountLeft);
     assert.equal(internalWalletBalance, amountToSend);
+  });
+
+  it('Check login functions', async () => {
+    try {
+      await walletLedger.methods.callWalletCheckUsername(walletAddress, '').call();
+      assert(false);
+    } catch (err) {
+      assert(err);
+    }
+
+    try {
+      await walletLedger.methods.callWalletCheckPassword(walletAddress, '').call();
+      assert(false);
+    } catch (err) {
+      assert(err);
+    }
+
+    const checkUsername = await walletLedger.methods
+    .callWalletCheckUsername(walletAddress, username).call();
+    const checkPassword = await walletLedger.methods
+    .callWalletCheckPassword(walletAddress, password).call();
+
+    assert.ok(checkUsername);
+    assert.ok(checkPassword);
   });
 });

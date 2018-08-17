@@ -4,6 +4,17 @@ import "./openzeppelin/ownership/Ownable.sol";
 import "./Wallet.sol";
 
 contract WalletFunctions is Ownable {
+
+  function callWalletCheckPassword(address _walletAddress, string _password) public view onlyOwner returns (bool) {
+    Wallet currentWallet = Wallet(_walletAddress);
+    return currentWallet.checkPassword(_password);
+  }
+
+  function callWalletCheckUsername(address _walletAddress, string _username) public view onlyOwner returns (bool) {
+    Wallet currentWallet = Wallet(_walletAddress);
+    return currentWallet.checkUsername(_username);
+  }
+
   /* function callWalletAddInfo(address _walletAddress, string _key, string _value, string _password) public {
     IWallet currentWallet = IWallet(_walletAddress);
     currentWallet.addInfo(_key, _value, _password);
@@ -19,7 +30,7 @@ contract WalletFunctions is Ownable {
     return currentWallet.getInfo(_key);
   } */
 
-  function callTransferEth(address _walletAddress, uint _amount, address _recipient, string _password) public onlyOwner {
+  function callWalletTransferEth(address _walletAddress, uint _amount, address _recipient, string _password) public onlyOwner {
     Wallet currentWallet = Wallet(_walletAddress);
     currentWallet.transferEth(_amount, _recipient, _password);
   }
