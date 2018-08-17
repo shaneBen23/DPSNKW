@@ -5,6 +5,11 @@ import "./Wallet.sol";
 
 contract WalletFunctions is Ownable {
 
+  function callWalletLogin(address _walletAddress, string _username, string _password) public view onlyOwner returns (bool) {
+    Wallet currentWallet = Wallet(_walletAddress);
+    return currentWallet.login(_username, _password);
+  }
+
   function callWalletCheckPassword(address _walletAddress, string _password) public view onlyOwner returns (bool) {
     Wallet currentWallet = Wallet(_walletAddress);
     return currentWallet.checkPassword(_password);

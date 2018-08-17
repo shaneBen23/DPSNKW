@@ -18,6 +18,12 @@ contract Wallet is Ownable, Pausable, Utils {
     userInfo["password"] = bytes32ToString(_password);
   }
 
+  function login(string _username, string _password) public view onlyOwner returns (bool) {
+    require(checkPassword(_password));
+    require(checkUsername(_username));
+    return true;
+  }
+
   function checkPassword(string _password) public view onlyOwner returns (bool) {
     require(stringsEqual(userInfo["password"], _password));
     return true;

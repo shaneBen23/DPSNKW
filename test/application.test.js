@@ -162,7 +162,7 @@ describe('SmartWallet', () => {
     assert.equal(internalWalletBalance, amountToSend);
   });
 
-  it('Check login functions', async () => {
+  it('Check password and username check functions', async () => {
     try {
       await walletLedger.methods.callWalletCheckUsername(walletAddress, '').call();
       assert(false);
@@ -184,5 +184,19 @@ describe('SmartWallet', () => {
 
     assert.ok(checkUsername);
     assert.ok(checkPassword);
+  });
+
+  it('Check login function', async () => {
+    try {
+      await walletLedger.methods.callWalletLogin(walletAddress, '', '').call();
+      assert(false);
+    } catch (err) {
+      assert(err);
+    }
+
+    const login = await walletLedger.methods
+    .callWalletLogin(walletAddress, username, password).call();
+
+    assert.ok(login);
   });
 });
