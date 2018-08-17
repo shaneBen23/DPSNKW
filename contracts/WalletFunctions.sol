@@ -1,7 +1,6 @@
 pragma solidity ^0.4.24;
 
 import "./openzeppelin/ownership/Ownable.sol";
-
 import "./Wallet.sol";
 
 contract WalletFunctions is Ownable {
@@ -20,11 +19,6 @@ contract WalletFunctions is Ownable {
     return currentWallet.getInfo(_key);
   } */
 
-  /* function callWalletTransferTokens(address _walletAddress, address _recipient, address _tokenAddress, uint _amount, string _password) public {
-    IWallet currentWallet = IWallet(_walletAddress);
-    currentWallet.transferTokens(_recipient, _tokenAddress, _amount, _password);
-  } */
-
   function callTransferEth(address _walletAddress, uint _amount, address _recipient, string _password) public onlyOwner {
     Wallet currentWallet = Wallet(_walletAddress);
     currentWallet.transferEth(_amount, _recipient, _password);
@@ -35,10 +29,15 @@ contract WalletFunctions is Ownable {
     return currentWallet.getETHBalance();
   }
 
-  /* function callWalletGetTokenBalance(address _walletAddress, address _tokenAddress) public view onlyOwner returns (uint) {
-    IWallet currentWallet = IWallet(_walletAddress);
+  function callWalletGetTokenBalance(address _walletAddress, address _tokenAddress) public view onlyOwner returns (uint) {
+    Wallet currentWallet = Wallet(_walletAddress);
     return currentWallet.getTokenBalance(_tokenAddress);
-  } */
+  }
+
+  function callWalletTransferTokens(address _walletAddress, uint _amount, address _recipient, address _tokenAddress, string _password) public {
+    Wallet currentWallet = Wallet(_walletAddress);
+    currentWallet.transferTokens(_amount, _recipient, _tokenAddress, _password);
+  }
 
   /* function callWalletCashout(address _walletAddress, uint _amount, string _password) public {
     IWallet currentWallet = IWallet(_walletAddress);

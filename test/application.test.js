@@ -9,55 +9,44 @@ const web3 = new Web3(ganache.provider());
 
 const compiledWalletLedger = require('../build/contracts/WalletLedger.json');
 const compiledWallet = require('../build/contracts/Wallet.json');
-const compiledTokenList = require('../build/contracts/TokenList.json');
+const compiledSampleToken = require('../build/contracts/SampleToken.json');
 
 let accounts;
 let walletLedger;
 let wallet;
-let tokenList;
+let walletAddress;
+let sampleToken;
 const firstName = 'shane';
 const lastName = 'benjamin';
 const username = 'shaneBen23';
 const password = 'password';
 
-//Rinkeby
-// tokenListAddress = 0x7c8aadb5bd1d3cd14299475449c876109c19e657
-// walletLedgerAddress = 0x059ce3b613d0b8b487fbc88702ad1a4755b9bb16
-
-
-// "shane", "benjamin", "shaneben23", "password"
-
-
 beforeEach(async () => {
   accounts = await web3.eth.getAccounts();
 
-  tokenList = await new web3.eth.Contract(compiledTokenList.abi)
-  .deploy({ data: compiledTokenList.bytecode })
+  sampleToken = await new web3.eth.Contract(compiledSampleToken.abi)
+  .deploy({ data: compiledSampleToken.bytecode })
   .send({ from: accounts[0], gas: '6000000' });
 
   walletLedger = await new web3.eth.Contract(compiledWalletLedger.abi)
-  .deploy({
-    data: compiledWalletLedger.bytecode,
-    arguments: [tokenList.options.address]
-   })
+  .deploy({ data: compiledWalletLedger.bytecode })
   .send({ from: accounts[0], gas: '6000000' });
 
-  const transactionInfo = await walletLedger.methods
+  await walletLedger.methods
   .createWallet(firstName, lastName, username, password)
   .send({ from: accounts[0], gas: '1000000' });
 
-  const walletAddress = transactionInfo.events.NewWalletCreated.address;
-
-  const userInfo = await walletLedger.methods.getUserInfoViaAddress(walletAddress).call();
+  const userInfo = await walletLedger.methods.getUserInfoViaUsername(username).call();
 
   wallet = await new web3.eth.Contract(compiledWallet.abi, userInfo.wallet);
+  walletAddress = wallet.options.address;
 });
 
 describe('SmartWallet', () => {
-  it('Deploys walletLedger, wallet and tokenList', () => {
+  it('Deploys walletLedger, wallet and sampleToken', () => {
     assert.ok(walletLedger.options.address);
     assert.ok(wallet.options.address);
-    assert.ok(tokenList.options.address);
+    assert.ok(sampleToken.options.address);
   });
 
   it('Check wallet info', async () => {
@@ -65,19 +54,111 @@ describe('SmartWallet', () => {
     assert.equal(userInfo.firstName, firstName);
   });
 
-  it('Check wallet balance', async () => {
-    const userInfo = await walletLedger.methods.getUserInfoViaUsername(username).call();
-    const walletBalance = await walletLedger.methods
-    .callWalletGetETHBalance(userInfo.wallet).call();
+  it('Check credit wallet function and wallet ETH balance', async () => {
+    await wallet.methods.credit().send({
+      from: accounts[0],
+      value: web3.utils.toWei('0.02', 'ether')
+    });
 
-    assert.equal(walletBalance, 0);
+    const walletBalance = await walletLedger.methods
+    .callWalletGetETHBalance(walletAddress).call();
+
+    assert.equal(walletBalance, web3.utils.toWei('0.02', 'ether'));
   });
 
-  it('Check credit wallet function', async () => {
-    const userInfo = await walletLedger.methods.getUserInfoViaUsername(username).call();
-    const walletBalance = await walletLedger.methods
-    .callWalletGetETHBalance(userInfo.wallet).call();
+  it('Check wallet ERC20 balance', async () => {
+    await sampleToken.methods.quickIssueTokens(walletAddress).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
 
-    assert.equal(walletBalance, 0);
+    const walletBalance = await walletLedger.methods
+    .callWalletGetTokenBalance(walletAddress, sampleToken.options.address).call();
+
+    assert.equal(walletBalance, web3.utils.toWei('10000', 'ether'));
+  });
+
+  it('Transfer ETH from wallet', async () => {
+    const internalFirstName = 'test';
+    const internalLastName = 'test';
+    const internalUsername = 'test';
+    const internalPassword = 'password';
+
+    const amountBeforeTansfer = web3.utils.toWei('0.02', 'ether');
+    const amountToSend = web3.utils.toWei('0.01', 'ether');
+
+    await walletLedger.methods
+    .createWallet(internalFirstName, internalLastName, internalUsername, internalPassword)
+    .send({ from: accounts[0], gas: '1000000' });
+
+    const internalWallet = await walletLedger.methods
+    .getUserInfoViaUsername(internalUsername).call();
+
+    await wallet.methods.credit().send({
+      from: accounts[0],
+      value: amountBeforeTansfer
+    });
+
+    await walletLedger.methods
+    .callTransferEth(walletAddress, amountToSend, internalWallet.wallet, password).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+
+    const walletBalance = await walletLedger.methods
+    .callWalletGetETHBalance(walletAddress).call();
+
+    const internalWalletBalance = await walletLedger.methods
+    .callWalletGetETHBalance(internalWallet.wallet).call();
+
+    assert.equal(walletBalance, amountToSend);
+    assert.equal(internalWalletBalance, amountToSend);
+  });
+
+  it('Transfer ERC20 Tokens from wallet', async () => {
+    const internalFirstName = 'test';
+    const internalLastName = 'test';
+    const internalUsername = 'test';
+    const internalPassword = 'password';
+
+    const sampleTokenAddress = sampleToken.options.address;
+
+    const amountBeforeTansfer = web3.utils.toWei('10000', 'ether');
+    const amountToSend = web3.utils.toWei('4000', 'ether');
+    const amountBeforeTansferFloat = parseFloat(amountBeforeTansfer).toFixed(0);
+    const amountToSendFloat = parseFloat(amountToSend).toFixed(0);
+    const amountLeft = amountBeforeTansferFloat - amountToSendFloat;
+
+    await sampleToken.methods.quickIssueTokens(walletAddress).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+
+    await walletLedger.methods
+    .createWallet(internalFirstName, internalLastName, internalUsername, internalPassword)
+    .send({ from: accounts[0], gas: '1000000' });
+
+    const internalWallet = await walletLedger.methods
+    .getUserInfoViaUsername(internalUsername).call();
+
+    await walletLedger.methods
+    .callWalletTransferTokens(
+      walletAddress,
+      amountToSend,
+      internalWallet.wallet,
+      sampleTokenAddress,
+      password).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+
+    const walletBalance = await walletLedger.methods
+    .callWalletGetTokenBalance(walletAddress, sampleTokenAddress).call();
+
+    const internalWalletBalance = await walletLedger.methods
+    .callWalletGetTokenBalance(internalWallet.wallet, sampleTokenAddress).call();
+
+    assert.equal(walletBalance, amountLeft);
+    assert.equal(internalWalletBalance, amountToSend);
   });
 });

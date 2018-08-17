@@ -19,16 +19,10 @@ contract WalletLedger is WalletFunctions, Pausable, Utils {
   mapping (string => User) private usernameToUserInfoMap;
   /* Map from wallet address to user info */
   mapping (address => User) private addressToUserInfoMap;
-  /* Map for contract configuration addresses */
-  mapping (string => address) configs;
 
   event NewWalletCreated(string description, address walletAddress, uint64 time);
 
-  constructor() public {
-
-  }
-
-  function createWallet(string _firstname, string _lastname, string _username, string _password) public {
+  function createWallet(string _firstname, string _lastname, string _username, string _password) public whenNotPaused returns (address) {
     // Make sure username does not exist
     require(stringsEqual(usernameToUserInfoMap[_username].username, ""));
 
@@ -42,10 +36,11 @@ contract WalletLedger is WalletFunctions, Pausable, Utils {
     User memory newUser = User(_firstname, _lastname, _username, newWalletAddress);
 
     setMappings(newUser, newWalletAddress);
+
+    return newWalletAddress;
   }
 
-
-  function addWalletAddress(address _walletAddress) internal whenNotPaused {
+  function addWalletAddress(address _walletAddress) internal {
     walletAddressList.push(_walletAddress);
     emit NewWalletCreated("A new wallet was created", _walletAddress, uint64(now));
   }
@@ -59,7 +54,6 @@ contract WalletLedger is WalletFunctions, Pausable, Utils {
     return walletAddressList;
   }
 
-  //It works only when this function is commented
   function getUserInfoViaUsername(string _usernameQuery) public view onlyOwner returns (
     string firstName,
     string lastName,
@@ -80,9 +74,5 @@ contract WalletLedger is WalletFunctions, Pausable, Utils {
     lastName = addressToUserInfoMap[_walletAddress].lastName;
     username = addressToUserInfoMap[_walletAddress].username;
     wallet = addressToUserInfoMap[_walletAddress].wallet;
-  }
-
-  function updateConfig(string _key, address _addr) public onlyOwner {
-    configs[_key] = _addr;
   }
 }

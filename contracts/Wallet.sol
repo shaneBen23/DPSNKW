@@ -14,12 +14,11 @@ contract Wallet is Ownable, Pausable, Utils {
   address[] private contactList;
 
   constructor(bytes32 _username, bytes32 _password) public payable {
-    //string memory username =
-    //string memory password =
-
     userInfo["username"] = bytes32ToString(_username);
     userInfo["password"] = bytes32ToString(_password);
   }
+
+  function credit() public payable {}
 
   /*function addInfo(string _key, string _value, string _password) public onlyOwner {
     require(stringsEqual(userInfo["password"], _password));
@@ -36,15 +35,6 @@ contract Wallet is Ownable, Pausable, Utils {
     return userInfo[_key];
   }*/
 
-  /*function transferTokens(
-    address _recipient, address _tokenAddress, uint _amount, string _password
-    ) public onlyOwner {
-    require(stringsEqual(userInfo["password"], _password));
-    ERC20Basic token = ERC20Basic(_tokenAddress);
-    token.transfer(_recipient, _amount);
-  }*/
-
-    //Works with this
   function getETHBalance() public view onlyOwner returns (uint) {
     return address(this).balance;
   }
@@ -54,10 +44,16 @@ contract Wallet is Ownable, Pausable, Utils {
     address(_recipient).transfer(_amount);
   }
 
-  /*function getTokenBalance(address _tokenAddress) public view onlyOwner returns (uint) {
-    ERC20Basic token = ERC20Basic(_tokenAddress);
+  function getTokenBalance(address _tokenAddress) public view onlyOwner returns (uint) {
+    ERC20 token = ERC20(_tokenAddress);
     return token.balanceOf(this);
-  }*/
+  }
+
+  function transferTokens(uint _amount, address _recipient, address _tokenAddress, string _password) public onlyOwner {
+    require(stringsEqual(userInfo["password"], _password));
+    ERC20 token = ERC20(_tokenAddress);
+    token.transfer(_recipient, _amount);
+  }
 
   /*function cashout(uint _amount, string _password) public onlyOwner {
     require(stringsEqual(userInfo["password"], _password));
@@ -83,12 +79,10 @@ contract Wallet is Ownable, Pausable, Utils {
     contactList.push(_contactAddress);
   }*/
 
-    //works with this
   /*function getTokenList() public view onlyOwner returns (address[]) {
     return tokenList;
   }*/
 
-    //works with this
   /*function getContactList() public view onlyOwner returns (address[]) {
     return contactList;
   }*/
