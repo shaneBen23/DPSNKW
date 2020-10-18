@@ -1,5 +1,6 @@
 
-pragma solidity ^0.4.24;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 import "./Ownable.sol";
 import "../token/ERC20/ERC20.sol";
@@ -20,7 +21,7 @@ contract CanReclaimToken is Ownable {
    * @param _token ERC20 The address of the token contract
    */
   function reclaimToken(ERC20 _token) external onlyOwner {
-    uint256 balance = _token.balanceOf(this);
+    uint256 balance = _token.balanceOf(address(this));
     _token.safeTransfer(owner, balance);
   }
 

@@ -1,4 +1,5 @@
-pragma solidity ^0.4.24;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 import "./openzeppelin/token/ERC20/StandardToken.sol";
 
@@ -8,7 +9,7 @@ contract SampleToken is StandardToken {
    uint public decimals = 18;
    string public symbol = "TEST";
 
-   address public creator = 0x0;
+   address public creator = address(0);
 
    constructor() public {
         creator = msg.sender;

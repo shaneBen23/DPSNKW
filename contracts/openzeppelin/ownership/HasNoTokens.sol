@@ -1,4 +1,5 @@
-pragma solidity ^0.4.18;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 import "./CanReclaimToken.sol";
 
@@ -18,7 +19,7 @@ contract HasNoTokens is CanReclaimToken {
   * @param value_ uint256 the amount of the specified token
   * @param data_ Bytes The data passed from the caller.
   */
-  function tokenFallback(address from_, uint256 value_, bytes data_) external pure {
+  function tokenFallback(address from_, uint256 value_, bytes calldata data_) external pure {
     from_;
     value_;
     data_;

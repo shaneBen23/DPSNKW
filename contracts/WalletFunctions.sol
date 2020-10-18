@@ -1,24 +1,25 @@
-pragma solidity ^0.4.24;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 import "./openzeppelin/ownership/Ownable.sol";
 import "./Wallet.sol";
 
 contract WalletFunctions is Ownable {
 
-  function callWalletLogin(address _walletAddress, string _username, string _password) public view onlyOwner returns (bool) {
-    Wallet currentWallet = Wallet(_walletAddress);
-    return currentWallet.login(_username, _password);
-  }
+  // function callWalletLogin(address _walletAddress, string memory _username, string memory _password) public view onlyOwner returns (bool) {
+  //   Wallet currentWallet = Wallet(_walletAddress);
+  //   return currentWallet.login(_username, _password);
+  // }
 
-  function callWalletCheckPassword(address _walletAddress, string _password) public view onlyOwner returns (bool) {
-    Wallet currentWallet = Wallet(_walletAddress);
-    return currentWallet.checkPassword(_password);
-  }
+  // function callWalletCheckPassword(address _walletAddress, string memory _password) public view onlyOwner returns (bool) {
+  //   Wallet currentWallet = Wallet(_walletAddress);
+  //   return currentWallet.checkPassword(_password);
+  // }
 
-  function callWalletCheckUsername(address _walletAddress, string _username) public view onlyOwner returns (bool) {
-    Wallet currentWallet = Wallet(_walletAddress);
-    return currentWallet.checkUsername(_username);
-  }
+  // function callWalletCheckUsername(address _walletAddress, string memory _username) public view onlyOwner returns (bool) {
+  //   Wallet currentWallet = Wallet(_walletAddress);
+  //   return currentWallet.checkUsername(_username);
+  // }
 
   /* function callWalletAddInfo(address _walletAddress, string _key, string _value, string _password) public {
     IWallet currentWallet = IWallet(_walletAddress);
@@ -35,25 +36,25 @@ contract WalletFunctions is Ownable {
     return currentWallet.getInfo(_key);
   } */
 
-  function callWalletTransferEth(address _walletAddress, uint _amount, address _recipient, string _password) public onlyOwner {
-    Wallet currentWallet = Wallet(_walletAddress);
-    currentWallet.transferEth(_amount, _recipient, _password);
-  }
+  // function callWalletTransferEth(address _walletAddress, uint _amount, address _recipient, string memory _password) public onlyOwner {
+  //   Wallet currentWallet = Wallet(_walletAddress);
+  //   currentWallet.transferEth(_amount, _recipient, _password);
+  // }
 
-  function callWalletGetETHBalance(address _walletAddress) public view onlyOwner returns (uint) {
-    Wallet currentWallet = Wallet(_walletAddress);
-    return currentWallet.getETHBalance();
-  }
+  // function callWalletGetETHBalance(address _walletAddress) public view onlyOwner returns (uint) {
+  //   Wallet currentWallet = Wallet(_walletAddress);
+  //   return currentWallet.getETHBalance();
+  // }
 
-  function callWalletGetTokenBalance(address _walletAddress, address _tokenAddress) public view onlyOwner returns (uint) {
-    Wallet currentWallet = Wallet(_walletAddress);
-    return currentWallet.getTokenBalance(_tokenAddress);
-  }
+  // function callWalletGetTokenBalance(address _walletAddress, address _tokenAddress) public view onlyOwner returns (uint) {
+  //   Wallet currentWallet = Wallet(_walletAddress);
+  //   return currentWallet.getTokenBalance(_tokenAddress);
+  // }
 
-  function callWalletTransferTokens(address _walletAddress, uint _amount, address _recipient, address _tokenAddress, string _password) public {
-    Wallet currentWallet = Wallet(_walletAddress);
-    currentWallet.transferTokens(_amount, _recipient, _tokenAddress, _password);
-  }
+  // function callWalletTransferTokens(address _walletAddress, uint _amount, address _recipient, address _tokenAddress, string memory _password) public {
+  //   Wallet currentWallet = Wallet(_walletAddress);
+  //   currentWallet.transferTokens(_amount, _recipient, _tokenAddress, _password);
+  // }
 
   /* function callWalletCashout(address _walletAddress, uint _amount, string _password) public {
     IWallet currentWallet = IWallet(_walletAddress);

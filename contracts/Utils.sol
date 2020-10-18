@@ -1,4 +1,5 @@
-pragma solidity ^0.4.24;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 contract Utils {
   function stringsEqual(string memory _a, string memory _b) internal pure returns (bool) {
@@ -13,7 +14,7 @@ contract Utils {
       return true;
   }
 
-  function concatString(string _a, string _b, string _c) internal pure returns (string) {
+  function concatString(string memory _a, string memory _b, string memory _c) internal pure returns (string memory) {
     bytes memory _ba = bytes(_a);
     bytes memory _bb = bytes(_b);
     bytes memory _bc = bytes(_c);
@@ -22,32 +23,32 @@ contract Utils {
 
     uint k = 0;
     for (uint i = 0; i < _ba.length; i++) babc[k++] = _ba[i];
-    for (i = 0; i < _bb.length; i++) babc[k++] = _bb[i];
-    for (i = 0; i < _bc.length; i++) babc[k++] = _bc[i];
+    for (uint i = 0; i < _bb.length; i++) babc[k++] = _bb[i];
+    for (uint i = 0; i < _bc.length; i++) babc[k++] = _bc[i];
 
     return string(babc);
   }
 
-  function parseUInt(string self, uint _b) internal pure returns (uint) {
-    bytes memory bresult = bytes(self);
-    uint mint = 0;
-    bool decimals = false;
-     for (uint i=0; i<bresult.length; i++) {
-       if ((bresult[i] >= 48)&&(bresult[i] <= 57)) {
-         if (decimals) {
-           if (_b == 0) break;
-           else _b--;
-         }
-         mint *= 10;
-         mint += uint(bresult[i]) - 48;
-       } else if (bresult[i] == 46) decimals = true;
-     }
+  // function parseUInt(string memory self, uint _b) internal pure returns (uint) {
+  //   bytes memory bresult = bytes(self);
+  //   uint mint = 0;
+  //   bool decimals = false;
+  //    for (uint i=0; i<bresult.length; i++) {
+  //      if ((bresult[i].length >= 48)&&(bresult[i].length <= 57)) {
+  //        if (decimals) {
+  //          if (_b == 0) break;
+  //          else _b--;
+  //        }
+  //        mint *= 10;
+  //        mint += uint(bresult[i]) - 48;
+  //      } else if (bresult[i].length == 46) decimals = true;
+  //    }
 
-     if (_b > 0) mint *= 10**_b;
-     return mint;
-  }
+  //    if (_b > 0) mint *= 10**_b;
+  //    return mint;
+  // }
 
-  function bytes32ToString(bytes32 x) internal pure returns (string) {
+  function bytes32ToString(bytes32 x) internal pure returns (string memory) {
     bytes memory bytesString = new bytes(32);
     uint charCount = 0;
     for (uint j = 0; j < 32; j++) {
@@ -58,7 +59,7 @@ contract Utils {
         }
     }
     bytes memory bytesStringTrimmed = new bytes(charCount);
-    for (j = 0; j < charCount; j++) {
+    for (uint j = 0; j < charCount; j++) {
         bytesStringTrimmed[j] = bytesString[j];
     }
     return string(bytesStringTrimmed);
@@ -76,7 +77,7 @@ contract Utils {
   }
 
 // Array of addresses functions
-  function findAddressIndex(address[] addressList, address value) internal pure returns(uint) {
+  function findAddressIndex(address[] memory addressList, address value) internal pure returns(uint) {
         uint i = 0;
         while (addressList[i] != value) {
             i++;
@@ -84,16 +85,16 @@ contract Utils {
         return i;
     }
 
-    function removeAddressByValue(address[] storage addressList, address value) internal {
-        uint i = findAddressIndex(addressList, value);
-        removeByIndex(addressList, i);
-    }
+    // function removeAddressByValue(address[] storage addressList, address value) internal {
+    //     uint i = findAddressIndex(addressList, value);
+    //     removeByIndex(addressList, i);
+    // }
 
-    function removeByIndex(address[] storage addressList, uint i) internal {
-        while (i<addressList.length-1) {
-            addressList[i] = addressList[i+1];
-            i++;
-        }
-        addressList.length--;
-    }
+    // function removeByIndex(address[] storage addressList, uint i) internal {
+    //     while (i<addressList.length-1) {
+    //         addressList[i] = addressList[i+1];
+    //         i++;
+    //     }
+    //     addressList.length--;
+    // }
 }

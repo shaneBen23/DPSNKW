@@ -1,78 +1,65 @@
-pragma solidity ^0.4.24;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 import "./openzeppelin/lifecycle/Pausable.sol";
 import "./openzeppelin/ownership/Ownable.sol";
 
-import "./WalletFunctions.sol";
+import "./Wallet.sol";
 import "./Utils.sol";
 
-contract WalletLedger is WalletFunctions, Pausable, Utils {
+contract WalletLedger is Pausable, Utils {
   struct User {
     string firstName;
     string lastName;
     string username;
-    address wallet;
+    Wallet wallet;
   }
 
-  address[] private walletAddressList;
+  Wallet[] private walletList;
   /* Map from username to user info */
   mapping (string => User) private usernameToUserInfoMap;
-  /* Map from wallet address to user info */
-  mapping (address => User) private addressToUserInfoMap;
 
-  event NewWalletCreated(string description, address walletAddress, uint64 time);
+  event NewWalletCreated(string description, uint64 time);
 
-  function createWallet(string _firstname, string _lastname, string _username, string _password) public whenNotPaused returns (address) {
+  function createWallet(string memory _firstname, string memory _lastname, string memory _username, string memory _password) public whenNotPaused returns (Wallet) {
     // Make sure username does not exist
     require(stringsEqual(usernameToUserInfoMap[_username].username, ""));
 
     bytes32 convertedUsername = stringToBytes32(_username);
     bytes32 convertedPassword = stringToBytes32(_password);
 
-    address newWalletAddress = new Wallet(convertedUsername, convertedPassword);
+    Wallet newWallet = new Wallet(convertedUsername, convertedPassword);
 
-    addWalletAddress(newWalletAddress);
+    addWalletAddress(newWallet);
 
-    User memory newUser = User(_firstname, _lastname, _username, newWalletAddress);
+    User memory newUser = User(_firstname, _lastname, _username, newWallet);
 
-    setMappings(newUser, newWalletAddress);
+    setMappings(newUser);
 
-    return newWalletAddress;
+    return newWallet;
   }
 
-  function addWalletAddress(address _walletAddress) internal {
-    walletAddressList.push(_walletAddress);
-    emit NewWalletCreated("A new wallet was created", _walletAddress, uint64(now));
+  function addWalletAddress(Wallet _wallet) internal {
+    walletList.push(_wallet);
+    emit NewWalletCreated("A new wallet was created", uint64(block.timestamp));
   }
 
-  function setMappings(User _newUser, address _walletAddress) internal {
+  function setMappings(User memory _newUser) internal {
     usernameToUserInfoMap[_newUser.username] = _newUser;
-    addressToUserInfoMap[_walletAddress] = _newUser;
   }
 
-  function getWalletAddressList() public onlyOwner view returns (address[]) {
-    return walletAddressList;
+  function getWalletList() public onlyOwner view returns (Wallet[] memory) {
+    return walletList;
   }
 
-  function getUserInfoViaUsername(string _usernameQuery) public view onlyOwner returns (
-    string firstName,
-    string lastName,
-    string username,
-    address wallet) {
+  function getUserInfoViaUsername(string memory _usernameQuery) public view onlyOwner returns (
+    string memory firstName,
+    string memory lastName,
+    string memory username,
+    Wallet wallet) {
     firstName = usernameToUserInfoMap[_usernameQuery].firstName;
     lastName = usernameToUserInfoMap[_usernameQuery].lastName;
     username = usernameToUserInfoMap[_usernameQuery].username;
     wallet = usernameToUserInfoMap[_usernameQuery].wallet;
-  }
-
-  function getUserInfoViaAddress(address _walletAddress) public view onlyOwner returns (
-    string firstName,
-    string lastName,
-    string username,
-    address wallet) {
-    firstName = addressToUserInfoMap[_walletAddress].firstName;
-    lastName = addressToUserInfoMap[_walletAddress].lastName;
-    username = addressToUserInfoMap[_walletAddress].username;
-    wallet = addressToUserInfoMap[_walletAddress].wallet;
   }
 }

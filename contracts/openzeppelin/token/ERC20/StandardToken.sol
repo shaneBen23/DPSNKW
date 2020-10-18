@@ -1,4 +1,5 @@
-pragma solidity ^0.4.24;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 import "./ERC20.sol";
 import "../../math/SafeMath.sol";
@@ -23,7 +24,7 @@ contract StandardToken is ERC20 {
   /**
   * @dev Total number of tokens in existence
   */
-  function totalSupply() public view returns (uint256) {
+  function totalSupply() public override view returns (uint256) {
     return totalSupply_;
   }
 
@@ -32,7 +33,7 @@ contract StandardToken is ERC20 {
   * @param _owner The address to query the the balance of.
   * @return An uint256 representing the amount owned by the passed address.
   */
-  function balanceOf(address _owner) public view returns (uint256) {
+  function balanceOf(address _owner) public override view returns (uint256) {
     return balances[_owner];
   }
 
@@ -46,6 +47,7 @@ contract StandardToken is ERC20 {
     address _owner,
     address _spender
    )
+    override
     public
     view
     returns (uint256)
@@ -58,7 +60,7 @@ contract StandardToken is ERC20 {
   * @param _to The address to transfer to.
   * @param _value The amount to be transferred.
   */
-  function transfer(address _to, uint256 _value) public returns (bool) {
+  function transfer(address _to, uint256 _value) override public returns (bool) {
     require(_value <= balances[msg.sender]);
     require(_to != address(0));
 
@@ -77,7 +79,7 @@ contract StandardToken is ERC20 {
    * @param _spender The address which will spend the funds.
    * @param _value The amount of tokens to be spent.
    */
-  function approve(address _spender, uint256 _value) public returns (bool) {
+  function approve(address _spender, uint256 _value) override public returns (bool) {
     allowed[msg.sender][_spender] = _value;
     emit Approval(msg.sender, _spender, _value);
     return true;
@@ -94,6 +96,7 @@ contract StandardToken is ERC20 {
     address _to,
     uint256 _value
   )
+    override
     public
     returns (bool)
   {
@@ -164,7 +167,7 @@ contract StandardToken is ERC20 {
    * @param _amount The amount that will be created.
    */
   function _mint(address _account, uint256 _amount) internal {
-    require(_account != 0);
+    require(_account != address(0));
     totalSupply_ = totalSupply_.add(_amount);
     balances[_account] = balances[_account].add(_amount);
     emit Transfer(address(0), _account, _amount);
@@ -177,7 +180,7 @@ contract StandardToken is ERC20 {
    * @param _amount The amount that will be burnt.
    */
   function _burn(address _account, uint256 _amount) internal {
-    require(_account != 0);
+    require(_account != address(0));
     require(balances[_account] > _amount);
 
     totalSupply_ = totalSupply_.sub(_amount);

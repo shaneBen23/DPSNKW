@@ -2,6 +2,7 @@ const assert = require('assert');
 const ganache = require('ganache-cli');
 const Web3 = require('web3');
 const { beforeEach, describe, it } = require('mocha');
+const mocha = require('mocha');
 
 require('events').EventEmitter.defaultMaxListeners = Infinity;
 
@@ -21,40 +22,40 @@ const lastName = 'benjamin';
 const username = 'shaneBen23';
 const password = 'password';
 
-beforeEach(async () => {
-  accounts = await web3.eth.getAccounts();
+mocha.describe('SmartWallet', () => {
+  mocha.beforeEach(async () => {
+    accounts = await web3.eth.getAccounts();
+  
+    sampleToken = await new web3.eth.Contract(compiledSampleToken.abi)
+    .deploy({ data: compiledSampleToken.bytecode })
+    .send({ from: accounts[0], gas: '6500000' });
+  
+    walletLedger = await new web3.eth.Contract(compiledWalletLedger.abi)
+    .deploy({ data: compiledWalletLedger.bytecode })
+    .send({ from: accounts[0], gas: '6500000' });
+  
+    await walletLedger.methods
+    .createWallet(firstName, lastName, username, password)
+    .send({ from: accounts[0], gas: '6500000' });
+  
+    const userInfo = await walletLedger.methods.getUserInfoViaUsername(username).call();
+  
+    wallet = await new web3.eth.Contract(compiledWallet.abi, userInfo.wallet);
+    walletAddress = wallet.options.address;
+  });
 
-  sampleToken = await new web3.eth.Contract(compiledSampleToken.abi)
-  .deploy({ data: compiledSampleToken.bytecode })
-  .send({ from: accounts[0], gas: '6500000' });
-
-  walletLedger = await new web3.eth.Contract(compiledWalletLedger.abi)
-  .deploy({ data: compiledWalletLedger.bytecode })
-  .send({ from: accounts[0], gas: '6500000' });
-
-  await walletLedger.methods
-  .createWallet(firstName, lastName, username, password)
-  .send({ from: accounts[0], gas: '6500000' });
-
-  const userInfo = await walletLedger.methods.getUserInfoViaUsername(username).call();
-
-  wallet = await new web3.eth.Contract(compiledWallet.abi, userInfo.wallet);
-  walletAddress = wallet.options.address;
-});
-
-describe('SmartWallet', () => {
-  it('Deploys walletLedger, wallet and sampleToken', () => {
+  mocha.it('Deploys walletLedger, wallet and sampleToken', () => {
     assert.ok(walletLedger.options.address);
     assert.ok(wallet.options.address);
     assert.ok(sampleToken.options.address);
   });
 
-  it('Check wallet info', async () => {
+  mocha.it('Check wallet info', async () => {
     const userInfo = await walletLedger.methods.getUserInfoViaUsername(username).call();
     assert.equal(userInfo.firstName, firstName);
   });
 
-  it('Check credit wallet function and wallet ETH balance', async () => {
+  mocha.it('Check credit wallet function and wallet ETH balance', async () => {
     await wallet.methods.credit().send({
       from: accounts[0],
       value: web3.utils.toWei('0.02', 'ether')
@@ -66,7 +67,7 @@ describe('SmartWallet', () => {
     assert.equal(walletBalance, web3.utils.toWei('0.02', 'ether'));
   });
 
-  it('Check wallet ERC20 balance', async () => {
+  mocha.it('Check wallet ERC20 balance', async () => {
     await sampleToken.methods.quickIssueTokens(walletAddress).send({
       from: accounts[0],
       gas: '6500000'
@@ -78,7 +79,7 @@ describe('SmartWallet', () => {
     assert.equal(walletBalance, web3.utils.toWei('10000', 'ether'));
   });
 
-  it('Transfer ETH from wallet', async () => {
+  mocha.it('Transfer ETH from wallet', async () => {
     const internalFirstName = 'test';
     const internalLastName = 'test';
     const internalUsername = 'test';
@@ -115,7 +116,7 @@ describe('SmartWallet', () => {
     assert.equal(internalWalletBalance, amountToSend);
   });
 
-  it('Transfer ERC20 Tokens from wallet', async () => {
+  mocha.it('Transfer ERC20 Tokens from wallet', async () => {
     const internalFirstName = 'test';
     const internalLastName = 'test';
     const internalUsername = 'test';
@@ -162,7 +163,7 @@ describe('SmartWallet', () => {
     assert.equal(internalWalletBalance, amountToSend);
   });
 
-  it('Check password and username check functions', async () => {
+  mocha.it('Check password and username check functions', async () => {
     try {
       await walletLedger.methods.callWalletCheckUsername(walletAddress, '').call();
       assert(false);
@@ -186,7 +187,7 @@ describe('SmartWallet', () => {
     assert.ok(checkPassword);
   });
 
-  it('Check login function', async () => {
+  mocha.it('Check login function', async () => {
     try {
       await walletLedger.methods.callWalletLogin(walletAddress, '', '').call();
       assert(false);

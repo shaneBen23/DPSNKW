@@ -1,4 +1,5 @@
-pragma solidity ^0.4.18;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 import "./Ownable.sol";
 
@@ -29,7 +30,7 @@ contract HasNoEther is Ownable {
   /**
    * @dev Disallows direct send by settings a default function without the `payable` flag.
    */
-  function() external {
+  fallback() external {
   }
 
   /**

@@ -1,4 +1,5 @@
-pragma solidity ^0.4.18;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 import "./HasNoEther.sol";
 import "./HasNoTokens.sol";

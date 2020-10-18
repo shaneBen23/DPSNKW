@@ -1,4 +1,5 @@
-pragma solidity ^0.4.24;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.4.22 <0.7.1;
 
 import "./StandardToken.sol";
 import "./ERC20.sol";

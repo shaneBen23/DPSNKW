@@ -1,4 +1,5 @@
-pragma solidity ^0.4.24;
+// "SPDX-License-Identifier: UNLICENSED"
+pragma solidity >=0.6.0 <0.7.1;
 
 import "./openzeppelin/lifecycle/Pausable.sol";
 import "./openzeppelin/ownership/Ownable.sol";
@@ -18,18 +19,18 @@ contract Wallet is Ownable, Pausable, Utils {
     userInfo["password"] = bytes32ToString(_password);
   }
 
-  function login(string _username, string _password) public view onlyOwner returns (bool) {
+  function login(string memory _username, string memory _password) public view onlyOwner returns (bool) {
     require(checkPassword(_password));
     require(checkUsername(_username));
     return true;
   }
 
-  function checkPassword(string _password) public view onlyOwner returns (bool) {
+  function checkPassword(string memory _password) public view onlyOwner returns (bool) {
     require(stringsEqual(userInfo["password"], _password));
     return true;
   }
 
-  function checkUsername(string _username) public view onlyOwner returns (bool) {
+  function checkUsername(string memory _username) public view onlyOwner returns (bool) {
     require(stringsEqual(userInfo["username"], _username));
     return true;
   }
@@ -55,17 +56,18 @@ contract Wallet is Ownable, Pausable, Utils {
     return address(this).balance;
   }
 
-  function transferEth(uint _amount, address _recipient, string _password) public onlyOwner {
+  function transferEth(uint _amount, address _recipient, string memory _password) public onlyOwner {
     require(stringsEqual(userInfo["password"], _password));
-    address(_recipient).transfer(_amount);
+    address payable recipient = payable(_recipient);
+    recipient.transfer(_amount);
   }
 
   function getTokenBalance(address _tokenAddress) public view onlyOwner returns (uint) {
     ERC20 token = ERC20(_tokenAddress);
-    return token.balanceOf(this);
+    return token.balanceOf(address(this));
   }
 
-  function transferTokens(uint _amount, address _recipient, address _tokenAddress, string _password) public onlyOwner {
+  function transferTokens(uint _amount, address _recipient, address _tokenAddress, string memory _password) public onlyOwner {
     require(stringsEqual(userInfo["password"], _password));
     ERC20 token = ERC20(_tokenAddress);
     token.transfer(_recipient, _amount);
@@ -104,5 +106,5 @@ contract Wallet is Ownable, Pausable, Utils {
   }*/
 
   /* fall back function, to receive ether */
-  function() public payable { }
+  receive() external payable { }
 }

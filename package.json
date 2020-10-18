@@ -12,14 +12,14 @@
   },
   "author": "",
   "dependencies": {
+    "@truffle/hdwallet-provider": "^1.1.1",
     "babel-polyfill": "^6.26.0",
     "babel-register": "^6.26.0",
     "dotenv": "^6.0.0",
     "ganache-cli": "^6.1.6",
-    "mocha": "^5.2.0",
+    "mocha": "^8.2.0",
     "npm": "^6.4.0",
     "remixd": "0.1.8-alpha.4",
-    "truffle-hdwallet-provider": "0.0.3",
     "web3": "^1.0.0-beta.26"
   },
   "devDependencies": {
